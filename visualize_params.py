@@ -12,19 +12,22 @@ img_height=360
 
 learning_rate = .1
 training_epochs = 3000
+total_epochs = 4000
 
 forget_epoch = 1000
 
 num_hidden = 32
-activation_function='tanh'
-num_selected_neurons=16
-select_func = sf.most_negative_select_func
+activation_function='linear_rectifier'
+num_selected_neurons=32
+select_func = None
+dropout = 0.5
 
 #uncomment below to enable hidden layer
 num_hidden2 = 32;
-activation_function2='tanh'
-num_selected_neurons2=100
+activation_function2='linear_rectifier'
+num_selected_neurons2=32
 select_func2 = None
+dropout2 = 0.5
 
 activation_function_final='tanh'
 
@@ -46,6 +49,6 @@ axis_x_max = 2.0
 axis_y_min = -2.0
 axis_y_max = 2.0
 
-random_seed = 4;
+random_seed = 15;
 
 spread = 0.05

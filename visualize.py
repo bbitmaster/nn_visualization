@@ -65,23 +65,21 @@ num_hidden = p['num_hidden']
 
 layers = [];
 layers.append(nnet.layer(2))
-layers.append(nnet.layer(p['num_hidden'],p['activation_function'],select_func=p['select_func'],select_func_params=p['num_selected_neurons']))
+layers.append(nnet.layer(p['num_hidden'],p['activation_function'],select_func=p['select_func'],select_func_params=p['num_selected_neurons'],dropout=p['dropout']))
 
 #Add 2nd and 3rd hidden layers if there are parameters indicating that we should
 if(p.has_key('num_hidden2')):
-    layers.append(nnet.layer(p['num_hidden2'],p['activation_function2'],select_func=p['select_func2'],select_func_params=p['num_selected_neurons2']))
+    layers.append(nnet.layer(p['num_hidden2'],p['activation_function2'],select_func=p['select_func2'],select_func_params=p['num_selected_neurons2'],dropout=p['dropout2']))
 if(p.has_key('num_hidden3')):
-    layers.append(nnet.layer(p['num_hidden3'],p['activation_function3'],select_func=p['select_func3'],select_func_params=p['num_selected_neurons3']))
+    layers.append(nnet.layer(p['num_hidden3'],p['activation_function3'],select_func=p['select_func3'],select_func_params=p['num_selected_neurons3'],dropout=p['dropout3']))
 layers.append(nnet.layer(num_classes,p['activation_function_final']))
 
 learning_rate = p['learning_rate']
 
 
-
-
 #generate random classes
 sample_data = np.zeros([2,num_classes*examples_per_class]);
-class_data = np.zeros([num_classes,num_classes*examples_per_class]);
+class_data = np.ones([num_classes,num_classes*examples_per_class])*-1.0;
 
 for i in range(num_classes):
     #get random center
@@ -108,15 +106,20 @@ if(not dump_to_file):
 net = nnet.net(layers,learning_rate)
 epoch = 1;
 
-while(1):
+while(epoch < p['total_epochs']):
     net.input = sample_data;
     net.feed_forward();
     net.error = net.output - class_data
     neterror = net.error
     net_classes = net.output
     percent_miss = 1.0 - sum(np.equal(np.argmax(net_classes,0),np.argmax(class_data,0)))/float(num_classes*examples_per_class)
-    net.back_propagate()
-    net.update_weights();
+    if epoch < p['training_epochs']:
+        net.back_propagate()
+        net.update_weights();
+    
+    if epoch == p['training_epochs']:
+        net.train = False;
+        
     output_string = "epoch: " + str(epoch) + " percent: " + str(percent_miss) + " MSE: " + str(np.sum(neterror**2))
     #if we're dumping to a file, then plot everything
     #if we aren't dumping to a file then only plot at every n'th frame where n is frameskip
