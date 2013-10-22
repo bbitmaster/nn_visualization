@@ -49,6 +49,9 @@ class image_plotter(object):
     def processEvents(self):
         return cv2.waitKey(1);
 
+    #TODO: Write This
+    def convertToAxisCoords(self,coords):
+        pass
     def convertToImgCoords(self,coords):
         img_coords = [0,0];
         img_width = self.img.shape[1]
@@ -108,5 +111,11 @@ class image_plotter(object):
 
     def drawText(self,x,y,txt,size=1,color=(1,1,1)):
         (img_x,img_y) = self.convertToImgCoords((x,y));
+        img_y = img_y + cv2.getTextSize(txt,cv2.FONT_HERSHEY_PLAIN,fontScale=size,thickness=1)[0][1];
+        cv2.putText(self.img,txt,(int(img_x),int(img_y)),cv2.FONT_HERSHEY_PLAIN,fontScale=size,color=color)
+
+    #draw text using image coordinates
+    def drawTextImg(self,x,y,txt,size=1,color=(1,1,1)):
+        (img_x,img_y) = (x,y)
         img_y = img_y + cv2.getTextSize(txt,cv2.FONT_HERSHEY_PLAIN,fontScale=size,thickness=1)[0][1];
         cv2.putText(self.img,txt,(int(img_x),int(img_y)),cv2.FONT_HERSHEY_PLAIN,fontScale=size,color=color)
